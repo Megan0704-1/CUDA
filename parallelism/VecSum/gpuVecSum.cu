@@ -1,6 +1,6 @@
 #include <iostream>
 
-#define N 10
+#define N 100000
 
 __global__ void add(int* a, int* b, int* c){
     int threadId = blockIdx.x;

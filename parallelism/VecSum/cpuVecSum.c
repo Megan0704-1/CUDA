@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#define N 10
+#define N 100000
 
 void add(int *a, int* b, int* c){
     int cpuid=0;
