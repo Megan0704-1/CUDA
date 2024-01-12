@@ -12,6 +12,9 @@ file(GLOB CUDA_SOURCE *.cu)
 set_source_files_properties(${C_SOURCE} PROPERTIES LANGUAGE C)
 set_source_files_properties(${CUDA_SOURCE} PROPERTIES LANGUAGE CUDA)
 
+# set compile option for C files
+set(CMAKE_C_FLAGS "-g -Wall")
+
 foreach(SOURCE_FILE ${C_SOURCE})
     get_filename_component(TARGET_NAME ${SOURCE_FILE} NAME_WE)
     message(STATUS "target name = ${TARGET_NAME}")
