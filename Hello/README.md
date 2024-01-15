@@ -20,3 +20,9 @@
 - Not allow to use pointers allocated with `cudaMalloc()` to r/w **mem** on the host.
 > We can not modify the memory from the host.
 > To access device memory: use device ptrs!
+
+## Commands
+```
+make clean
+make all
+```
