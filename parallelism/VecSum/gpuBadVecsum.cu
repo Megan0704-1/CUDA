@@ -2,7 +2,7 @@
 
 #define N 100000
 
-void add(int *a, int* b, int* c){
+__global__ void add(int *a, int* b, int* c){
     int cpuid=0;
     while(cpuid < N){
         c[cpuid] = a[cpuid] + b[cpuid];
@@ -19,7 +19,7 @@ int main(void){
         b[i] = i*i;
     }
 
-    add(a, b, c);
+    add<<<1,1>>>(a, b, c);
 
     // diaply the result
     for(int i=N-10; i<N; i++){

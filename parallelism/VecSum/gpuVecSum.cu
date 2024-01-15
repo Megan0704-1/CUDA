@@ -7,7 +7,6 @@ __global__ void add(int* a, int* b, int* c){
     if(threadId < N){
         c[threadId] = a[threadId] + b[threadId];
     }
-    printf("thread Id: %d, a[id]: %d\n", threadId, a[threadId]);
     return;
 }
 
@@ -36,7 +35,7 @@ int main(void){
     cudaMemcpy(c, dev_c, N*sizeof(int), cudaMemcpyDeviceToHost);
 
     // display the resule
-    for(int i=0; i<N; i++){
+    for(int i=N-10; i<N; i++){
         printf("%d + %d = %d\n", a[i], b[i], c[i]);
     }
 
