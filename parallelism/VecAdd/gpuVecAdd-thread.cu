@@ -2,16 +2,19 @@
 #include <assert.h>
 #include <math.h>
 
-#define N 1000
+#define N 100000000
 #define MAX_ERROR 1e-6
 
 __global__ void add(float* a, float* b, float* c, int n){
     int idx = threadIdx.x;
     int stride = blockDim.x;
+    int blockID = blockIdx.x;
 
-    printf("thread id: %d, block id: %d\n", idx, stride);
-    for(int i=idx; i<n; i+=stride){
-        c[i] = a[i] + b[i];
+    int tid = idx + stride * blockID;
+
+    while(tid < n){
+        c[tid] = a[tid] + b[tid];
+        tid += stride * gridDim.x;
     }
 }
 
@@ -35,13 +38,15 @@ int main(){
     cudaMemcpy(dev_a, a, sizeof(float)*N, cudaMemcpyHostToDevice);
     cudaMemcpy(dev_b, b, sizeof(float)*N, cudaMemcpyHostToDevice);
 
-    add<<<1, 256>>>(dev_a, dev_b, dev_c, N);
+    add<<<N/256+1, 256>>>(dev_a, dev_b, dev_c, N);
 
     cudaMemcpy(c, dev_c, sizeof(float)*N, cudaMemcpyDeviceToHost);
 
     for(int i=0; i<N; i++){
         assert(fabs(c[i] - a[i] - b[i]) < MAX_ERROR);
     }
+
+    printf("PASSED\n");
 
     cudaFree(dev_a);
     cudaFree(dev_b);
