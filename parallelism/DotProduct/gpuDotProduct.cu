@@ -27,13 +27,11 @@ __global__ void dot(float* a, float* b, float* c){
     // synchronizing threads in a block.
     __syncthreads();
 
-    int i = blockDim.x/2;
-    while(i!=0){
+    for(int i=blockDim.x>>1; i>0; i=i>>1){
         if(cacheIdx < i){
             cache[cacheIdx] += cache[cacheIdx + i];
         }
         __syncthreads();
-        i /= 2;
     }
 
     if(cacheIdx==0){
