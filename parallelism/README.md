@@ -5,3 +5,11 @@
 - basic Vector add program
 2. VecAdd
 - parallel VecSum programs with multithread.
+3. JuliaSet
+- Using OpenGL, GLUT, GLEW, and GLFW3 packages to render JuliaSet images (cpu, gpu)
+4. DotProduct
+- Combining concepts in element wise product, shared_memory on GPU, syncrhonization, and reduction.
+5. Animation
+- Animating application to render infinite JuliaSet.
+6. ConstantMem
+
