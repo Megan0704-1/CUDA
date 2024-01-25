@@ -6,7 +6,7 @@
 
 using uc = unsigned char;
 
-__global__ void kernel( uc* ptr, Sphere* s){
+__global__ void kernel( uc* ptr , Sphere* s){
     // map to pixel position
     int x = threadIdx.x + blockIdx.x * blockDim.x;
     int y = threadIdx.y + blockIdx.y * blockDim.y;
@@ -38,12 +38,6 @@ __global__ void kernel( uc* ptr, Sphere* s){
 }
 
 int main(void){
-    // capture the start time
-    cudaEvent_t start, stop;
-    cudaEventCreate( &start );
-    cudaEventCreate( &stop );
-    cudaEventRecord( start, 0 );
-
     CPUBitmap bitmap( DIM, DIM );
     uc *dev_bitmap;
     Sphere* s;
@@ -51,6 +45,7 @@ int main(void){
     // allocate space for output (dev_map), and input (s) on GPU
     cudaMalloc( (void**)&dev_bitmap, bitmap.image_size() );
     cudaMalloc( (void**)&s, sizeof(Sphere)*numSPHERES );
+
 
     // generate 20 spheres
     Sphere* host_s = (Sphere*)malloc( sizeof(Sphere)*numSPHERES );
@@ -71,9 +66,26 @@ int main(void){
     // generate a bitmap from sphere data
     dim3 grids( DIM/16, DIM/16 );
     dim3 threads( 16, 16 );
+
+    // capture the start time
+    cudaEvent_t start, stop;
+    cudaEventCreate( &start );
+    cudaEventCreate( &stop );
+    cudaEventRecord( start, 0 );
+
     kernel<<<grids, threads>>>(dev_bitmap, s);
 
+    cudaEventRecord( stop, 0 );
+    cudaEventSynchronize(stop);
+
     cudaMemcpy(bitmap.get_ptr(), dev_bitmap, bitmap.image_size() , cudaMemcpyDeviceToHost);
+
+    // display performance
+    float elapsedTime;
+    cudaEventElapsedTime( &elapsedTime, start, stop );
+    printf("Time to generate: %3.5f ms\n", elapsedTime);
+    cudaEventDestroy(start);
+    cudaEventDestroy(stop);
     
     bitmap.display_and_exit();
 

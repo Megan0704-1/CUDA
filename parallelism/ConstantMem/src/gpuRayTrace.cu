@@ -41,10 +41,6 @@ __global__ void kernel(uc* ptr){
 
 int main(void)
 {
-    cudaEvent_t start, stop;
-    cudaEventCreate( &start );
-    cudaEventCreate( &stop );
-    cudaEventRecord( start, 0 );
 
     CPUBitmap bitmap( DIM, DIM );
     uc *dev_bitmap;
@@ -66,15 +62,30 @@ int main(void)
 
     // different memcpy api
     cudaMemcpyToSymbol( s, host_s, sizeof(Sphere)*numSPHERES );
-
     free(host_s);
-    
+
     // num of blocks in grids
     dim3 blocks( DIM/16, DIM/16 );
     // num of threads per block
     dim3 threads( 16, 16 );
 
-    kernel<<<blocks, threads>>>( dev_bitmap);
+    cudaEvent_t start, stop;
+    cudaEventCreate( &start );
+    cudaEventCreate( &stop );
+    cudaEventRecord( start, 0 );
+
+    kernel<<<blocks, threads>>>( dev_bitmap );
+
+    cudaEventRecord( stop, 0 );
+    cudaEventSynchronize( stop );
+
+    // calcualte generated time
+    float elapsedTime;
+    cudaEventElapsedTime( &elapsedTime, start, stop );
+    printf("Time to generate: %3.5f ms\n", elapsedTime);
+
+    cudaEventDestroy(start);
+    cudaEventDestroy(stop);
 
     cudaMemcpy(bitmap.get_ptr(), dev_bitmap, bitmap.image_size(), cudaMemcpyDeviceToHost);
 
