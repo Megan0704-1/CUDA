@@ -2,7 +2,7 @@
 #define SPHERE_H
 #define INF 2e10f
 #define rnd(x) (x * rand() / RAND_MAX)
-#define numSPHERES 20
+#define numSPHERES 40
 #define DIM 1024
 
 #include <cuda_runtime.h>

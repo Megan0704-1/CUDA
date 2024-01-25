@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 
 set(TARGET_NAME RayTracing)
-project(${TARGET_NAME} LANGUAGES CXX CUDA)
+project(${TARGET_NAME}-app LANGUAGES CXX CUDA)
 
 find_package(CUDA REQUIRED)
 enable_language(CUDA)
@@ -18,6 +18,11 @@ get_filename_component(RT_ROOT ${CMAKE_CURRENT_LIST_DIR} ABSOLUTE)
 add_library(Sphere ${RT_ROOT}/src/Sphere.cu)
 set_target_properties(Sphere PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 
-add_executable(${TARGET_NAME} ${RT_ROOT}/src/main.cu)
+add_executable(${TARGET_NAME} ${RT_ROOT}/src/RayTrace.cu)
+add_executable(${TARGET_NAME}_constMem ${RT_ROOT}/src/gpuRayTrace.cu)
+
 set_target_properties(${TARGET_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+set_target_properties(${TARGET_NAME}_constMem PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+
 target_link_libraries(${TARGET_NAME} PRIVATE ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${GLFW3_LIBRARIES} ${GLUT_LIBRARIES} Sphere)
+target_link_libraries(${TARGET_NAME}_constMem PRIVATE ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${GLFW3_LIBRARIES} ${GLUT_LIBRARIES} Sphere)

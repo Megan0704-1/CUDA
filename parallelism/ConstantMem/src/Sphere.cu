@@ -6,7 +6,7 @@ __device__ float Sphere::hit(float px, float py, float* n){
     if( dx*dx + dy*dy < radius*radius ){
         float dz = sqrtf( radius*radius - dx*dx - dy*dy );
         *n = dz / sqrtf( radius*radius );
-        return dz + z;
+        return z - dz*2;
     }
 
     return -INF;
